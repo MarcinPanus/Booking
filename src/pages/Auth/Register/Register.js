@@ -1,13 +1,13 @@
 import { useState } from "react";
-import axios from "axios";
 import LoadingButton from '../../../components/UI/LoadingButton/LoadingButton';
 import { validate } from '../../../helpers/validations';
 import Input from '../../../components/Input/Input';
-import useAuth from '../../../hooks/useAuth'
-import { useHistory } from "react-router-dom";
+import axios from '../../../axios-auth';
+import useAuth from "../../../hooks/useAuth";
+import { useHistory } from 'react-router-dom';
 
 export default function Register(props) {
-  const history = useHistory()
+  const history = useHistory();
   const [auth, setAuth] = useAuth();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
@@ -24,7 +24,7 @@ export default function Register(props) {
       rules: ['required']
     },
   });
-  const [error, setError] = useState('')
+  const [error, setError] = useState('');
   const valid = !Object.values(form)
                     .map(input => input.error)
                     .filter(error => error)
@@ -35,17 +35,21 @@ export default function Register(props) {
     setLoading(true);
 
     try {
-      const res = await axios.post("https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAXwBIOaWi7W4p920051tf8j6_WMQCFZ54", {
+      const res = await axios.post('accounts:signUp', {
         email: form.email.value,
         password: form.password.value,
         returnSecureToken: true
       });
-      console.log(res.data);
-      setAuth(true, res.data)
-      history.push('/')
+
+      setAuth({
+        email: res.data.email,
+        token: res.data.idToken,
+        userId: res.data.localId,
+      });
+      history.push('/');
     } catch (ex) {
-      console.log(ex.response)
-      setError(ex.response.data.error.message)
+      setError(ex.response.data.error.message);
+      console.log(ex.response);
     }
 
     setLoading(false);
@@ -65,8 +69,8 @@ export default function Register(props) {
       });
   }
 
-  if(auth) {
-    history.push('/')
+  if (auth) {
+    history.push('/');
   }
 
   return (
@@ -93,9 +97,11 @@ export default function Register(props) {
             onChange={val => changeHandler(val, 'password')}
             error={form.password.error}
             showError={form.password.showError} />
+
           {error ? (
             <div className="alert alert-danger">{error}</div>
           ) : null}
+
           <div className="text-right">
             <LoadingButton 
               loading={loading} 

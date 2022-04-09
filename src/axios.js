@@ -1,7 +1,7 @@
-import axios from "axios";
+import axios from 'axios';
 
 const instance = axios.create({
-  baseURL: "https://noclegi-4132c-default-rtdb.europe-west1.firebasedatabase.app/"
+  baseURL: 'https://kurs-react-2995a-default-rtdb.firebaseio.com'
 });
 
 export default instance;

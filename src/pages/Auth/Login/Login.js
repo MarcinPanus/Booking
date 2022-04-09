@@ -2,15 +2,14 @@ import { useState } from "react";
 import useAuth from '../../../hooks/useAuth';
 import { useHistory } from 'react-router-dom';
 import LoadingButton from '../../../components/UI/LoadingButton/LoadingButton';
-import axios from "axios";
-
+import axios from '../../../axios-auth';
 
 export default function Login(props) {
   const [auth, setAuth] = useAuth();
   const history = useHistory();
 
   const [email, setEmail] = useState('');
-  const [passsword, setPassword] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [valid, setValid] = useState(null);
   const [error, setError] = useState('');
@@ -20,28 +19,27 @@ export default function Login(props) {
     setLoading(true);
 
     try {
-      const res = await axios.post("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAXwBIOaWi7W4p920051tf8j6_WMQCFZ54", {
-        email, 
-        passsword,
-        returnSecureToken: true
-      })
-      console.log(res)
+      const res = await axios.post('accounts:signInWithPassword', {
+        email,
+        password,
+        returnSecureToken: true,
+      });
+
+      setAuth({
+        email: res.data.email,
+        token: res.data.idToken,
+        userId: res.data.localId,
+      });
+      history.push('/');
     } catch (ex) {
-      console.log(ex.response)
-      setError(ex.response.data.error.message)
+      setError(ex.response.data.error.message);
+      setLoading(false);
+      console.log(ex.response);
     }
+  }
 
-
-    //   // logowanie
-    //   if (true) {
-    //     setAuth(true);
-    //     history.push('/');
-    //   } else {
-    //     setValid(false);
-    //     setPassword('')
-    //   }
-
-    setLoading(false);
+  if (auth) {
+    history.push('/');
   }
 
   return (
@@ -65,13 +63,15 @@ export default function Login(props) {
           <label>Hasło</label>
           <input 
             type="password" 
-            value={passsword} 
+            value={password} 
             onChange={e => setPassword(e.target.value)} 
             className="form-control" />
         </div>
+
         {error ? (
-            <div className="alert alert-danger">{error}</div>
-          ) : null}
+          <div className="alert alert-danger">{error}</div>
+        ) : null}
+
         <LoadingButton loading={loading}>Zaloguj</LoadingButton>
       </form>
     </div>
