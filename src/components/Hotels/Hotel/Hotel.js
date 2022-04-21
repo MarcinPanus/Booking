@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import styles from './Hotel.module.css';
-import hotelImg from '../../../assets/images/hotel.jpg'; 
 import ThemeContext from '../../../context/themeContext';
 import { useContext } from 'react';
 import useAuth from '../../../hooks/useAuth';
@@ -20,7 +19,9 @@ function Hotel(props) {
   
   const clickHandler = e => {
     // e.preventDefault();
-    props.onOpen(props);
+    if (props.onOpen) {
+      props.onOpen(props);
+    }
   }
 
   return (
@@ -30,7 +31,7 @@ function Hotel(props) {
         <div className="row">
           <div className="col-4">
             <img
-              src={hotelImg}
+              src={`https://placeimg.com/220/18${Math.floor(Math.random() * 10)}/arch`}
               alt=""
               className="img-fluid img-thumbnail" />
           </div>
@@ -41,7 +42,7 @@ function Hotel(props) {
                 <span className="badge badge-light">{props.city}</span>
               </div>
               <div className="col text-right">
-                <h5>Ocena: {props.rating}</h5>
+                <h5>Ocena: {props.rating ?? 0}</h5>
                   <Link 
                     onClick={clickHandler}
                     to={`/hotele/${props.id}`}
@@ -58,7 +59,7 @@ function Hotel(props) {
             </p>
 
             {auth 
-              ? <p className="mt-2">Dostępność: 4 pokoje</p>
+              ? <p className="mt-2">Dostępność: {props.rooms} pokoje</p>
               : <p className="mt-2">Dostępność: zaloguj</p>
             }
             
