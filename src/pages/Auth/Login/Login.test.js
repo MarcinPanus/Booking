@@ -22,8 +22,8 @@ test('changes email value', () => {
   const utils = render(<Login />);
   const emialInput = utils.getByLabelText('Email');
 
-  fireEvent.change(emialInput, { target: { value: 'adam'} });
-  expect(emialInput.value).toBe('adam');
+  fireEvent.change(emialInput, { target: { value: 'marcin'} });
+  expect(emialInput.value).toBe('marcin');
 });
 
 test('show error on fail login', async () => {
